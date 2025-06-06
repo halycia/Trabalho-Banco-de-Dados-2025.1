@@ -1,19 +1,21 @@
-CREATE TABLE Prato 
-( 
+CREATE TABLE Prato
+(
     nome VARCHAR(90) PRIMARY KEY,
     kcalPrato FLOAT,
     icone BYTEA
 );
 
-CREATE TABLE Ingrediente 
-( 
+
+CREATE TABLE Ingrediente
+(
     nome VARCHAR(40) PRIMARY KEY,
     kcal_ingrediente FLOAT,
     restricao VARCHAR(50)
 );
 
-CREATE TABLE Usuario 
-( 
+
+CREATE TABLE Usuario
+(
     email VARCHAR(100) PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     nome VARCHAR(100) NOT NULL,
@@ -21,47 +23,50 @@ CREATE TABLE Usuario
     telefone VARCHAR(25)
 );
 
-CREATE TABLE Campus 
-( 
+
+CREATE TABLE Campus
+(
     nome VARCHAR(30) PRIMARY KEY,
     email VARCHAR(100) UNIQUE NOT NULL,
     telefone VARCHAR(25),
     endereco VARCHAR(200) UNIQUE NOT NULL
 );
 
-CREATE TABLE Restaurante 
-( 
-    numRestaurante INT,
-    nomeCampus VARCHAR(30),
+
+CREATE TABLE Restaurante
+(
+    id SERIAL PRIMARY KEY, 
+    numRestaurante INT NOT NULL,
     diasFunc VARCHAR(100),
     capacidade INT,
-    PRIMARY KEY (numRestaurante, nomeCampus),
-    FOREIGN KEY (nomeCampus) REFERENCES Campus(nome)
+    nomeCampus VARCHAR(30) NOT NULL REFERENCES Campus(nome),
+    UNIQUE (numRestaurante, nomeCampus)
 );
 
-CREATE TABLE Setor 
-( 
+
+CREATE TABLE Setor
+(
+    id SERIAL PRIMARY KEY,
     nome VARCHAR(50),
-    nomeCampus VARCHAR(30),
     telefone VARCHAR(25) UNIQUE,
-    PRIMARY KEY (nome, nomeCampus),
-    FOREIGN KEY (nomeCampus) REFERENCES Campus(nome)
+    nomeCampus VARCHAR(30) NOT NULL REFERENCES Campus(nome),
+    UNIQUE (nome, nomeCampus)
 );
 
-CREATE TABLE Feedback 
-( 
+
+CREATE TABLE Feedback
+(
     id SERIAL PRIMARY KEY,
     data DATE NOT NULL,
     texto VARCHAR(500) NOT NULL,
     tipo VARCHAR(50) NOT NULL,
-    emailUsuario VARCHAR(100) NOT NULL REFERENCES Usuario(email),
-    nomeSetor VARCHAR(50) NOT NULL,
-    nomeCampus VARCHAR(30) NOT NULL,
-    FOREIGN KEY (nomeSetor, nomeCampus) REFERENCES Setor(nome, nomeCampus)
+    idSetor NOT NULL REFERENCES Setor(id),
+    emailUsuario VARCHAR(100) NOT NULL REFERENCES Usuario(email)
 );
 
-CREATE TABLE Avaliacao 
-( 
+
+CREATE TABLE Avaliacao
+(
     id SERIAL PRIMARY KEY,
     qntCurtidas INT DEFAULT 0,
     dataAvaliacao DATE NOT NULL,
@@ -73,8 +78,9 @@ CREATE TABLE Avaliacao
     nomePrato VARCHAR(100) NOT NULL REFERENCES Prato(nome)
 );
 
-CREATE TABLE Comentario 
-( 
+
+CREATE TABLE Comentario
+(
     id SERIAL PRIMARY KEY,
     texto VARCHAR(500) NOT NULL,
     data DATE NOT NULL,
@@ -83,16 +89,18 @@ CREATE TABLE Comentario
     emailUsuario VARCHAR(100) NOT NULL REFERENCES Usuario(email)
 );
 
-CREATE TABLE Cardapio 
-( 
+
+CREATE TABLE Cardapio
+(
     id SERIAL PRIMARY KEY,
     dataInicio DATE NOT NULL,
     status VARCHAR(20) NOT NULL,
     especial VARCHAR(40)
 );
 
-CREATE TABLE Ingrediente_Prato 
-( 
+
+CREATE TABLE Ingrediente_Prato
+(
     nomeIngrediente VARCHAR(40),
     nomePrato VARCHAR(90),
     PRIMARY KEY (nomeIngrediente, nomePrato),
@@ -100,18 +108,19 @@ CREATE TABLE Ingrediente_Prato
     FOREIGN KEY (nomePrato) REFERENCES Prato(nome)
 );
 
-CREATE TABLE Cardapio_Restaurante 
-( 
-    numRestaurante INT,
-    nomeCampus VARCHAR(30),
+
+CREATE TABLE Cardapio_Restaurante
+(
+    idRestaurante INT,
     idCardapio INT,
-    PRIMARY KEY (numRestaurante, nomeCampus, idCardapio),
-    FOREIGN KEY (numRestaurante, nomeCampus) REFERENCES Restaurante(numRestaurante, nomeCampus),
+    PRIMARY KEY (idRestaurante, idCardapio),
+ FOREIGN KEY (idRestaurante) REFERENCES Restaurante(id),
     FOREIGN KEY (idCardapio) REFERENCES Cardapio(id)
 );
 
-CREATE TABLE Cardapio_Prato 
-( 
+
+CREATE TABLE Cardapio_Prato
+(
     idCardapio INT,
     nomePrato VARCHAR(90),
     refeicao VARCHAR(50) NOT NULL,
