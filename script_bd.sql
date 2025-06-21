@@ -60,7 +60,7 @@ CREATE TABLE Feedback
     data DATE NOT NULL,
     texto VARCHAR(500) NOT NULL,
     tipo VARCHAR(50) NOT NULL,
-    idSetor NOT NULL REFERENCES Setor(id),
+    idSetor INT NOT NULL REFERENCES Setor(id),
     emailUsuario VARCHAR(100) NOT NULL REFERENCES Usuario(email)
 );
 
